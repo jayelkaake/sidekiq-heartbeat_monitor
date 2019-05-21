@@ -1,11 +1,11 @@
 # coding: utf-8
 lib = File.expand_path('../lib', __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require 'sidekiq-heartbeat_monitor'
+require 'sidekiq/heartbeat_monitor'
 
 Gem::Specification.new do |spec|
   spec.name          = "sidekiq-heartbeat_monitor"
-  spec.version       = SimpleSpeedTester::VERSION
+  spec.version       = Sidekiq::HeartbeatMonitor::VERSION
   spec.authors       = ["Jay El-Kaake"]
   spec.email         = ["najibkaake@gmail.com"]
 
@@ -29,6 +29,7 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency "dont_repeat_for", ">= 1.0.0"
   spec.add_dependency "slack-notifier", ">= 2.0.0"
+  spec.add_dependency "sidekiq", ">= 4.2.1"
 
   spec.add_development_dependency "rails", ">= 4.0.0"
 

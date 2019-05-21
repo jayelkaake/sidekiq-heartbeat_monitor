@@ -28,7 +28,7 @@ module Sidekiq
 
         def send_backed_up_alert(message, q)
           if @on_backed_up.blank?
-            puts ("ERROR: No 'on_backed_up' callback defined but one of the queues are backed up: #{message}")
+            puts ("WARNING: No 'on_backed_up' callback defined for sidekiq-heartbeat_monitor but one of the queues are backed up: #{message}")
             return
           end
 
@@ -43,7 +43,7 @@ module Sidekiq
 
         def send_slowed_down_alert(message, q)
           if @on_slowed_down.blank?
-            puts ("ERROR: No 'on_slowed_down' callback defined but one of the queues are backed up: #{message}")
+            puts ("WARNING: No 'on_slowed_down' callback defined for sidekiq-heartbeat_monitor but one of the queues are backed up: #{message}")
             return
           end
 
