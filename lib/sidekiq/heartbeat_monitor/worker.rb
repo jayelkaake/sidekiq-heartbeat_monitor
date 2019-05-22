@@ -28,7 +28,9 @@ module Sidekiq
       # @param msg [String] Message to post
       # @param queue_name [String] Queue we're concerned with
       def send_server_alert(msg, queue_name)
-        Sidekiq::HeartbeatMonitor::Config.send_slowed_down_alert(msg, queue_name)
+        queue = Sidekiq::Queue.all.find{ |q| q.name.to_s == queue_name.to_s }
+
+        Sidekiq::HeartbeatMonitor::Config.send_slowed_down_alert(msg, queue)
 
         true
       end
