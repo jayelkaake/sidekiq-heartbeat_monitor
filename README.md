@@ -1,4 +1,4 @@
-# Sidekiq Heartbeat Montior Gem
+# Sidekiq Montior Gem
 
 This gem adds 2 things:
 1. A lightweight heartbeat task that runs every few minutes and alerts if it takes longer than a few seconds to start.
@@ -60,15 +60,6 @@ Sidekiq::HeartbeatMonitor.configure(
 ```
 
 **Note:** `on_backed_up` and `on_slowed_down` accept an array and will always add to existing callbacks (you can combine `slack_notiifer_url` with them)
-
-### STEP 3. Schedule recurring task
-If you're using sidekiq-cron, add this to your `config/scheduler.yml` file:
-```yml
-sidekiq_heartbeat_monitor:
-  cron: "*/15 * * * * *" # Heart beat runs every 15 seconds in this case
-  class: "Sidekiq::HeartbeatMonitor::Scheduler"
-  queue: scheduler
-```
 
 ## Testing Your Config
 To test your config:

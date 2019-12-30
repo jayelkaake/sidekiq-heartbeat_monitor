@@ -10,7 +10,7 @@ module Sidekiq
         Sidekiq::Queue.all.each do |q|
           check_queue_size(q, Sidekiq::HeartbeatMonitor::Config.max_queue_size)
 
-          Sidekiq::HeartbeatMonitor::Worker.perform_async(q.name, 15)
+          Sidekiq::HeartbeatMonitor::Worker.client_push('class' => self, 'args' => [q.name, 15], 'queue' => q.name)
         end
       end
 

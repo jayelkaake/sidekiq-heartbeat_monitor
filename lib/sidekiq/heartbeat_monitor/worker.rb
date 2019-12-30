@@ -10,7 +10,7 @@ module Sidekiq
       # @param queue_name [String] Name of the queue that this heartbeat is running on.
       def perform(queue_name, secs_between_beats = 15)
         current_run_at = Time.now.utc.to_i
-        last_run_at = $redis.get("Sidekiq/HeartbeatMonitor/Worker/#{queue_name}.last_run_at").to_i
+        last_run_at = redis.get("Sidekiq/HeartbeatMonitor/Worker/#{queue_name}.last_run_at").to_i
 
         if last_run_at > 0
           time_since_last_run = current_run_at - last_run_at
@@ -21,7 +21,7 @@ module Sidekiq
           end
         end
 
-        $redis.set("Sidekiq/HeartbeatMonitor/Worker/#{queue_name}.last_run_at", current_run_at, ex: 1.hour)
+        redis.set("Sidekiq/HeartbeatMonitor/Worker/#{queue_name}.last_run_at", current_run_at, ex: 1.hour)
       end
 
       ##
@@ -35,6 +35,11 @@ module Sidekiq
         true
       end
 
+      private
+
+      def redis
+        @@redis = defined?($redis) ? $redis : Redis.new
+      end
 
     end
   end

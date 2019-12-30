@@ -18,6 +18,10 @@ module Sidekiq
             @on_backed_up = @on_backed_up.to_a + slack_notifier_callback
             @on_slowed_down = @on_slowed_down.to_a + slack_notifier_callback
           end
+
+          unless Sidekiq::Cron::Job.find("sidekiq_monitor").present?
+            Sidekiq::Cron::Job.create(name: 'sidekiq_monitor', cron: '*/15 * * * * *', class: 'Sidekiq::HeartbeatMonitor::Scheduler')
+          end
         end
 
         def send_test!
