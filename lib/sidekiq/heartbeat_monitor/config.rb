@@ -21,7 +21,11 @@ module Sidekiq
           end
 
           unless Sidekiq::Cron::Job.find("sidekiq_monitor").present?
-            Sidekiq::Cron::Job.create(name: 'sidekiq_monitor', cron: '*/15 * * * * *', class: Sidekiq::HeartbeatMonitor::Scheduler.to_s)
+            Sidekiq::Cron::Job.create(
+              name: 'sidekiq_monitor', 
+              cron: '*/15 * * * * *', 
+              klass: Sidekiq::HeartbeatMonitor::Scheduler
+            )
           end
         end
 
