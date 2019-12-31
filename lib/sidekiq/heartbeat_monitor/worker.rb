@@ -38,7 +38,7 @@ module Sidekiq
       private
 
       def redis
-        @@redis = defined?($redis) ? $redis : Redis.new
+        @@redis ||= defined?($redis) ? $redis : Redis.new
       end
 
     end
