@@ -27,16 +27,17 @@ Gem::Specification.new do |spec|
   spec.executables   = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
   spec.require_paths = ["lib"]
 
-  spec.add_dependency "dont_repeat_for", ">= 1.0.0"
-  spec.add_dependency "slack-notifier", ">= 2.0.0"
-  spec.add_dependency "sidekiq", ">= 4.2.1"
+  spec.add_dependency "sidekiq", ">= 4"
+  spec.add_dependency "sidekiq-cron", ">= 0.6"
+  spec.add_dependency "dont_repeat_for", ">= 1"
+  spec.add_dependency "slack-notifier", ">= 0.5"
 
-  spec.add_development_dependency "rails", ">= 4.0.0"
+  spec.add_development_dependency "rails", ">= 4"
 
   spec.add_development_dependency "bundler"
-  spec.add_development_dependency "temping", "~> 3.3.0"
-  spec.add_development_dependency "rake", "~> 10.0"
+  spec.add_development_dependency "temping", "~> 3.3"
+  spec.add_development_dependency "rake", "~> 10"
   spec.add_development_dependency "rspec", '~> 3.4'
-  spec.add_development_dependency "sqlite3", '~> 1.3.11'
+  spec.add_development_dependency "sqlite3", '~> 1.3'
 
 end
