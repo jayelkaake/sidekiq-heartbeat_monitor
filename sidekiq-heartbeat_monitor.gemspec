@@ -31,6 +31,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency "sidekiq-cron", ">= 0.6"
   spec.add_dependency "dont_repeat_for", ">= 1"
   spec.add_dependency "slack-notifier", ">= 0.5"
+  spec.add_dependency "dotenv", ">= 1.0"
 
   spec.add_development_dependency "rails", ">= 4"
 

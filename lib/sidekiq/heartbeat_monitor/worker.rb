@@ -3,43 +3,32 @@ module Sidekiq
     class Worker
 
       include Sidekiq::Worker
+      include Sidekiq::HeartbeatMonitor::Util
       sidekiq_options retry: 0
 
       ##
       # Runs every x seconds and ensures that the time between jobs is consistent and
       # @param queue_name [String] Name of the queue that this heartbeat is running on.
-      def perform(queue_name, secs_between_beats = 15)
-        current_run_at = Time.now.utc.to_i
-        last_run_at = redis.get("Sidekiq/HeartbeatMonitor/Worker/#{queue_name}.last_run_at").to_i
+      def perform(queue_name)
+        Sidekiq.redis do |redis|
+          q = Sidekiq::Queue.all.find{ |q| q.name.to_s == queue_name.to_s }
+          queue_config = Sidekiq::HeartbeatMonitor.config(q)
 
-        if last_run_at > 0
-          time_since_last_run = current_run_at - last_run_at
-          if time_since_last_run > (5.minutes + secs_between_beats)
-            sec_backed_up = time_since_last_run - secs_between_beats
+          key = "Sidekiq:HeartbeatMonitor:Worker-#{queue_name}.enqueued_at"
+          enqueued_at = redis.get(key).to_i
 
-            send_server_alert("⚠️ queue #{queue_name} took > #{sec_backed_up}s to reach job.", queue_name)
+          return if enqueued_at < 1577997505 # Enqueued before Jan 2, 2020 when this code was written
+
+          time_since_enqueued = Time.now.to_i - enqueued_at
+
+          if time_since_enqueued > queue_config.max_heartbeat_delay
+            queue_config.send_slowed_down_alert!("⚠️ _#{queue_name}_ queue took #{format_time_str(time_since_enqueued)} to reach job.", q)
           end
+
+          redis.del(key)
         end
-
-        redis.set("Sidekiq/HeartbeatMonitor/Worker/#{queue_name}.last_run_at", current_run_at, ex: 1.hour)
       end
 
-      ##
-      # @param msg [String] Message to post
-      # @param queue_name [String] Queue we're concerned with
-      def send_server_alert(msg, queue_name)
-        queue = Sidekiq::Queue.all.find{ |q| q.name.to_s == queue_name.to_s }
-
-        Sidekiq::HeartbeatMonitor::Config.send_slowed_down_alert(msg, queue)
-
-        true
-      end
-
-      private
-
-      def redis
-        @@redis ||= defined?($redis) ? $redis : Redis.new
-      end
 
     end
   end
