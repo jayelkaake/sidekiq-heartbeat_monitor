@@ -4,6 +4,7 @@ require 'sidekiq/heartbeat_monitor/config'
 require 'sidekiq/heartbeat_monitor/util'
 require 'sidekiq/heartbeat_monitor/scheduler'
 require 'sidekiq/heartbeat_monitor/worker'
+require 'sidekiq/heartbeat_monitor/test_worker'
 
 module Sidekiq
   module HeartbeatMonitor
