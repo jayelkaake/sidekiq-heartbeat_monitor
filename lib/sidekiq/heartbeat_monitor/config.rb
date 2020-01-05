@@ -62,6 +62,44 @@ module Sidekiq
         end
       end
 
+      def self.install_cron_job!(output: false)
+        job = Sidekiq::Cron::Job.find("sidekiq_monitor")
+
+        target_job = Sidekiq::Cron::Job.new(
+          name: 'sidekiq_monitor', 
+          cron: '* * * * *', 
+          klass: Sidekiq::HeartbeatMonitor::Scheduler
+        )
+
+        if job.present?
+          if job.cron != target_job.cron && job.klass.to_s != target_job.klass
+            unless job.destroy
+              puts "ERROR: An existing cron job was found with the same name but incorrect configuration. An attempt to delete it (to create a new, correctly configured one) failed." if output
+              return false
+            end
+
+            if target_job.save
+              puts "SUCCESS: An existing crob job was found that had the same name but had outdated configuration, so it was deleted and a new one was installed successfully." if output
+              true
+            else
+              puts "ERROR: Sidekiq heartbeat monitor found an existing cron job with the same name but it is configured incorrectly. It was deleted, but a new one could not be created. Run this command again to try adding it manually again and please ensure you can programmatically add sidekiq cron jobs as well." if output
+              false
+            end
+          else
+            puts "SUCCESS: Sidekiq heartbeat monitor cron job already exists and appears to be configured properly so nothing was changed."  if output
+            true
+          end
+        else
+          if target_job.save
+            puts "SUCCESS: New cron task was installed successfully." if output
+            true
+          else
+            puts "ERROR: New cron task could not be saved for some reason. Please ensure you can programmatically add sidekiq cron jobs and try again." if output
+            false
+          end
+        end
+      end
+
       private
 
       def setup_slack_notifier!(slack_notifier_url)
@@ -74,22 +112,15 @@ module Sidekiq
       end
 
       def install_cron_job!
-        job = Sidekiq::Cron::Job.find("sidekiq_monitor")
+        # Only install the cron job if we're running as a sidekiq server
+        return unless Sidekiq.server?
 
-        target_job = Sidekiq::Cron::Job.new(
-          name: 'sidekiq_monitor', 
-          cron: '* * * * *', 
-          klass: Sidekiq::HeartbeatMonitor::Scheduler
-        )
+        self.class.install_cron_job!
 
-        if job.present?
-          if job.cron != target_job.cron && job.klass.to_s != target_job.klass
-            job.destroy
-            target_job.save
-          end
-        else
-          target_job.save
-        end
+      rescue Redis::CannotConnectError
+        # If we failed to connect at this point then likely Redis is not yet configured at this point in initialization, 
+        # so we should just abort
+        false
       end
 
     end

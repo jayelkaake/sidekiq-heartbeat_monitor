@@ -21,6 +21,14 @@ Or install it yourself as:
 
 **Configuration is required - see the Configuration section below**
 
+### (Optional) Install Cron Task
+The gem will automatically try to install your cron task when you run your sidekiq server, however if for some reason it does not install the cron task
+then you can install it manually using the available rake task command:
+```
+rake sidekiq::heartbeat_monitor:install
+```
+
+
 ### Requirements
 1. [Dont Repeat For Gem](https://www.github.com/jayelkaake/dont_repeat_for) - To allow you to only send notifications every so often.
 2. Redis

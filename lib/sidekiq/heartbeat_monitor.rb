@@ -6,6 +6,9 @@ require 'sidekiq/heartbeat_monitor/scheduler'
 require 'sidekiq/heartbeat_monitor/worker'
 require 'sidekiq/heartbeat_monitor/test_worker'
 
+require 'sidekiq/heartbeat_monitor/railtie' if defined?(Rails)
+
+
 module Sidekiq
   module HeartbeatMonitor
     def self.configure(options = {})
