@@ -81,5 +81,10 @@ Bug reports and pull requests are welcome on GitHub at https://github.com/jayelk
 This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to
 adhere to the [Contributor Covenant](contributor-covenant.org) code of conduct.
 
+### Supported versions
+Battle-tested @ [Fera.ai](https://www.fera.ai) with:
+* Ruby 2.4 - 2.6.7 (but up to 3.0 should be fine)
+* Sidekiq 3-5
+
 ### License
 The gem is available as open source under the terms of the [MIT License](http://opensource.org/licenses/MIT).
