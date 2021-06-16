@@ -27,7 +27,7 @@ module Sidekiq
       return @global_config if queue.blank?
 
       queue_name = queue.is_a?(String) || queue.is_a?(Symbol) ? queue.to_s : queue.name.to_s
-      @queue_config[queue_name] || @global_config
+      @queue_config.to_h[queue_name] || @global_config
     end
 
     def self.send_test!(queue_name = nil)

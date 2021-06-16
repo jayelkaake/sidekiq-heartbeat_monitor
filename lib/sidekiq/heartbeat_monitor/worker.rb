@@ -1,9 +1,9 @@
 module Sidekiq
   module HeartbeatMonitor
     class Worker
-
       include Sidekiq::Worker
       include Sidekiq::HeartbeatMonitor::Util
+      
       sidekiq_options retry: 0
 
       ##
@@ -13,6 +13,7 @@ module Sidekiq
         Sidekiq.redis do |redis|
           q = Sidekiq::Queue.all.find{ |q| q.name.to_s == queue_name.to_s }
           queue_config = Sidekiq::HeartbeatMonitor.config(q)
+          return if queue_config.nil?
 
           key = "Sidekiq:HeartbeatMonitor:Worker-#{queue_name}.enqueued_at"
           enqueued_at = redis.get(key).to_i

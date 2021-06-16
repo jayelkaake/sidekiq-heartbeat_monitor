@@ -13,6 +13,8 @@ module Sidekiq
         Sidekiq.redis do |redis|
           Sidekiq::Queue.all.each do |q|
             queue_config = Sidekiq::HeartbeatMonitor.config(q)
+            next if queue_config.nil?
+            
             check_queue_size!(q, queue_config)
 
             key = "Sidekiq:HeartbeatMonitor:Worker-#{q.name}.enqueued_at"
